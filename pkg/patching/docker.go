@@ -3,10 +3,12 @@ package patching
 import (
 	"fmt"
 	"os"
+
+	"github.com/spf13/viper"
 )
 
 func PatchDocker() error {
-	composeBaseDir := "/srv/compose"
+	composeBaseDir := viper.GetString("compose_dir")
 	composeDirs, err := os.ReadDir(composeBaseDir)
 	for _, composeDir := range composeDirs {
 		if composeDir.IsDir() {
