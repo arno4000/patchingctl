@@ -2,6 +2,7 @@ package patching
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"runtime"
 	"strings"
@@ -26,5 +27,24 @@ func DetectOS() (string, error) {
 }
 
 func Reboot() error {
-	return ExecuteCommand("reboot")
+	distro, err := DetectOS()
+	if err != nil {
+		return err
+	}
+	if distro == "debian" {
+		if _, err := os.Stat("/var/run/reboot-required"); !os.IsNotExist(err) {
+			return ExecuteCommand("reboot")
+		}
+	} else if distro == "rhel" {
+		cmd := exec.Command("needs-restarting", "-r")
+		err := cmd.Run()
+		if err != nil {
+			if exitError, ok := err.(*exec.ExitError); ok {
+				if exitError.ExitCode() == 1 {
+					return ExecuteCommand("reboot")
+				}
+			}
+		}
+	}
+	return nil
 }
