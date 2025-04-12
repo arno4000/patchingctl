@@ -1,3 +1,4 @@
 reboot: true
 compose_dir: /srv/compose
 logfile_path: /var/log/patching.log
+reboot_delay: 10 minutes

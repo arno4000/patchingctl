@@ -6,6 +6,8 @@ import (
 	"os/exec"
 	"runtime"
 	"strings"
+
+	"github.com/spf13/viper"
 )
 
 func DetectOS() (string, error) {
@@ -33,7 +35,7 @@ func Reboot() error {
 	}
 	if distro == "debian" {
 		if _, err := os.Stat("/var/run/reboot-required"); !os.IsNotExist(err) {
-			return ExecuteCommand("reboot")
+			return ExecuteCommand(fmt.Sprintf("shutdown -r %s", viper.GetString("reboot_delay")))
 		}
 	} else if distro == "rhel" {
 		cmd := exec.Command("needs-restarting", "-r")
@@ -41,7 +43,7 @@ func Reboot() error {
 		if err != nil {
 			if exitError, ok := err.(*exec.ExitError); ok {
 				if exitError.ExitCode() == 1 {
-					return ExecuteCommand("reboot")
+					return ExecuteCommand(fmt.Sprintf("shutdown -r %s", viper.GetString("reboot_delay")))
 				}
 			}
 		}
