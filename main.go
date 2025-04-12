@@ -8,11 +8,11 @@ import (
 )
 
 func main() {
-	utils.InitLogger()
 	err := utils.LoadConfig("/etc/patching.yaml")
 	if err != nil {
 		logrus.Fatalln(err)
 	}
+	utils.InitLogger()
 	err = patching.UpdateOS()
 	if err != nil {
 		logrus.Fatalln(err)

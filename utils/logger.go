@@ -8,16 +8,14 @@ import (
 )
 
 func InitLogger() {
-	log := logrus.New()
-
 	if isInteractive() {
-		log.Out = os.Stdout
+		logrus.SetOutput(os.Stdout)
 	} else {
 		file, err := os.OpenFile(viper.GetString("logfile_path"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 		if err != nil {
-			log.Fatal(err)
+			logrus.Fatal(err)
 		}
-		log.Out = file
+		logrus.SetOutput(file)
 	}
 }
 
